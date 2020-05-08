@@ -15,6 +15,6 @@ phases:
       - npm run build
   post_build:
     commands:
-      - aws s3 sync ./build s3://p1_reimbursement-ui-juan-valencia
+      - aws s3 sync ./build s3://p1-reimbursement-ui-juan-valencia
 
 
