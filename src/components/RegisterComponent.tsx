@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
-import { TextField, Typography, FormControl, InputLabel, Input, makeStyles, Button } from '@material-ui/core';
+import { Redirect, useHistory } from 'react-router-dom';
+import { TextField, Typography, FormControl, InputLabel, Input, makeStyles, Button, Select, MenuItem } from '@material-ui/core';
 import { addNewEmployee } from '../remote/auth-service';
 import { Employee } from '../models/employee';
+import Alert from '@material-ui/lab/Alert';
 
 
 interface IRegisterProps {
     registeredEmployee: Employee;
+    authAdmin: string;
     setEmployee: (employee: Employee) => void
 }
 
@@ -28,6 +30,7 @@ const useStyles = makeStyles({
 function RegisterComponent(props: IRegisterProps) {
 
     const classes = useStyles();
+    const history = useHistory();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -35,6 +38,8 @@ function RegisterComponent(props: IRegisterProps) {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('');
+    
+    const [errorMessage, setErrorMessage] = useState('');
 
     let addUsername = (e: any) => {
         setUsername(e.currentTarget.value);
@@ -57,32 +62,33 @@ function RegisterComponent(props: IRegisterProps) {
     }
 
     let addRole = (e: any) => {
-        setRole(e.currentTarget.value);
+        setRole(e.target.value);
     }
 
     let register = async () => {
+        try{
         let registeredEmployee = await addNewEmployee(username, password, firstName, lastName, email, role);
         console.log(registeredEmployee);
         props.setEmployee(registeredEmployee);
-        
+        history.goBack();
+        }
+        catch(e){
+            setErrorMessage(e.response.data.reason);
+        }
     }
 
-    let checkKeys = (item: any) => {
-        if(!item){
-            return false;
-        }
-        let test = Object.keys(item)
-        if(test.every(key => key)){
+    let checkAdmin = (authRole: string) => {
+        if(authRole === 'admin'){
             return true;
         }
-        else{
+        else {
             return false;
         }
     }
 
     return(
         
-        checkKeys(props.registeredEmployee) ?
+        !checkAdmin(props.authAdmin) ?
         <Redirect to="/home" /> :
         <>
         <div className={classes.registerContainer}>
@@ -108,7 +114,7 @@ function RegisterComponent(props: IRegisterProps) {
                         </FormControl>
 
                         <FormControl margin="normal" fullWidth>
-                            <InputLabel htmlFor="password">First Name</InputLabel>
+                            <InputLabel htmlFor="firstname">First Name</InputLabel>
                             <Input 
                             onChange={addFirstName} 
                             value={firstName} 
@@ -117,7 +123,7 @@ function RegisterComponent(props: IRegisterProps) {
                         </FormControl>
 
                         <FormControl margin="normal" fullWidth>
-                            <InputLabel  htmlFor="password">Last Name</InputLabel>
+                            <InputLabel  htmlFor="lastname">Last Name</InputLabel>
                             <Input 
                             onChange={addLastName} 
                             value={lastName} 
@@ -126,7 +132,7 @@ function RegisterComponent(props: IRegisterProps) {
                         </FormControl>
 
                         <FormControl margin="normal" fullWidth>
-                            <InputLabel htmlFor="password">Email</InputLabel>
+                            <InputLabel htmlFor="email">Email</InputLabel>
                             <Input 
                             onChange={addEmail} 
                             value={email} 
@@ -135,18 +141,24 @@ function RegisterComponent(props: IRegisterProps) {
                         </FormControl>
 
                         <FormControl margin="normal" fullWidth>
-                            <InputLabel htmlFor="password">Role</InputLabel>
-                            <Input 
+                            <InputLabel htmlFor="role">Role</InputLabel>
+                            {/* <Input 
                             onChange={addRole} 
                             value={role} 
                             id="role" type="text"
-                            placeholder="Enter your Role" />
+                            placeholder="Enter your Role" /> */}
+                            <Select value={role} onChange={addRole} >
+                                <MenuItem value={"user"}>User</MenuItem>
+                                <MenuItem value={"admin"}>Admin</MenuItem>
+                                <MenuItem value={"finance manager"}>Finance Manager</MenuItem>
+                            </Select>
                         </FormControl>
                         <br/>
                         <br/>
                         <Button onClick={register} variant="contained" color="primary" size="medium">REGISTER</Button>
                         <br/>
                         <br/>
+                        {errorMessage ? <Alert severity="error">{errorMessage} </Alert> : <></> }
                     </form>
                 </div>
         </>
