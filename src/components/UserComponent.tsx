@@ -152,7 +152,7 @@ function UserComponent(props: IUserProps){
     </div>
     <br/>
     <br/>
-    {errorMessage ? <Alert severity="error">{errorMessage} </Alert> : <></> }
+    {errorMessage ? <Alert severity="error" style={{display: "block", width: "50%"}}>{errorMessage} </Alert> : <></> }
         </>
     );
 }

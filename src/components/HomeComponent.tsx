@@ -1,10 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { Employee } from '../models/employee';
-import { Typography, 
-    Table, 
-    TableBody, 
-    TableHead, 
+import { Typography,
     TableRow, 
     TableCell, 
     makeStyles } from '@material-ui/core';
@@ -12,6 +9,7 @@ import { Typography,
 interface IHomeProps {
     username: string;
     newEmployee: Employee;
+    role: string;
 }
 
 const useStyles = makeStyles({
@@ -59,21 +57,7 @@ const HomeComponent = (props: IHomeProps) => {
                     Welcome, {props.username}!
                 </h1>
                     <div style={{margin: "auto", display: "block", width: "50%"}}>
-                        <Typography component="h6">Recently Added Employee</Typography>
-                            <Table>
-                            <TableHead>
-                                <TableRow >
-                                    <TableCell >Username</TableCell>
-                                    <TableCell >First Name</TableCell>
-                                    <TableCell >Last Name</TableCell>
-                                    <TableCell >Email</TableCell>
-                                    <TableCell >Role</TableCell>
-                                </TableRow>
-                                </TableHead>
-                                <TableBody component="tbody">
-                                    {registedUser(props.newEmployee)}
-                                </TableBody>
-                            </Table>
+                        
                             </div>
                 <br/><br/>
                 

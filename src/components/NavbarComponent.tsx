@@ -14,13 +14,6 @@ const useStyles = makeStyles({
     link: {
         textDecoration: "none",
         color: "black"
-    },
-    root: {
-        textDecoration: "none",
-        color: "black",
-        margin: "auto", 
-        display: "block",
-        alignItems: "right"
     }
 });
 
@@ -36,11 +29,6 @@ const NavbarComponent = (props: INavbarProps) => {
             return (
                 <>
                 <ListItemText inset>
-                        <Typography color="inherit" variant="h6">
-                            <Link to="/register" className={classes.link}>Register</Link>
-                        </Typography>
-                </ListItemText>
-                <ListItemText inset>
                 <Typography color="inherit" variant="h6">
                     <Link to="/user" className={classes.link}>Users</Link>
                 </Typography>
@@ -52,6 +40,24 @@ const NavbarComponent = (props: INavbarProps) => {
             return;
         }
     }
+
+    let checkFm = (authrole: string) => {
+        if(authrole === 'finance manager'){
+            return (
+                <>
+                <ListItemText inset>
+                <Typography color="inherit" variant="h6">
+                    <Link to="/reimbursements" className={classes.link}>Reimbursements</Link>
+                </Typography>
+        </ListItemText>
+        </>
+            );
+        }
+        else {
+            return;
+        }
+    }
+
     let logout = async () => {
         console.log('loggin out');
         props.setLogout(null);
@@ -86,19 +92,18 @@ const NavbarComponent = (props: INavbarProps) => {
         <>
             <List component="nav">
                 <ListItem component="div">
-                    <Typography color="inherit" variant="h5">Reimbursements</Typography>
+                    <Typography color="inherit" variant="h4">ERS</Typography>
                     <ListItemText inset>
                         <Typography color="inherit" variant="h6">
                             <Link to="/home" className={classes.link}>Home</Link>
                         </Typography>
                     </ListItemText>
+                    {checkFm(props.authRole)}
                     {checkAdmin(props.authRole)}
                     {checklogin(props.authUser?.username)}
-                    <br/>
-                    <br/>
                     <ListItemText inset>
                         <Typography color="inherit" variant="h6" >
-                            <span >{props.authUser?.username}</span>
+                            <span className={classes.link}>{props.authUser?.username}</span>
                         </Typography>
                     </ListItemText>
                 </ListItem>

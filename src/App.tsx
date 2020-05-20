@@ -5,7 +5,7 @@ import LoginComponent from './components/LoginComponent';
 import HomeComponent from './components/HomeComponent';
 import NavbarComponent from './components/NavbarComponent';
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
-import RegisterComponent from './components/RegisterComponent';
+import ReimbComponent from './components/ReimbursementComponent';
 import { Employee } from './models/employee';
 import LogoutComponent from './components/LogoutComponent';
 import UserComponent from './components/UserComponent';
@@ -31,9 +31,9 @@ function App() {
       
       <Switch>
         <Redirect  from="/" to="/login" exact />
-        <Route path="/home" render={() => <HomeComponent username={authUser?.username} newEmployee={registeredEmployee} /> } />
+        <Route path="/home" render={() => <HomeComponent username={authUser?.username} role={authUser?.role} newEmployee={registeredEmployee} /> } />
         <Route path="/login" render={() => <LoginComponent authUser={authUser} setAuthUser={setAuthUser} /> } />
-        <Route path="/register" render={() => <RegisterComponent authAdmin={authUser?.role} registeredEmployee={registeredEmployee} setEmployee={setEmployee} /> } />
+        <Route path="/reimbursements" render={() => <ReimbComponent role={authUser?.role} /> } />
         <Route path="/user" render={() => <UserComponent authAdmin={authUser?.role} /> } />
         <Route path="/logout" render={() => <LogoutComponent />} />
       </Switch>
