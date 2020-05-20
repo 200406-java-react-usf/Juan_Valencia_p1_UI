@@ -1,9 +1,10 @@
-import React, { useState, createRef } from 'react';
+import React, { useState, createRef,  useEffect } from 'react';
 import { Employee } from '../models/employee';
 import { Redirect } from 'react-router-dom';
 import  MaterialTable, { Column } from 'material-table';
-import { getEmployees, deleteEmployee } from '../remote/auth-service';
-import { Button } from '@material-ui/core';
+import { getEmployees, deleteEmployee, updateEmployee, addNewEmployee } from '../remote/auth-service';
+import { makeStyles } from '@material-ui/core';
+import {Alert} from '@material-ui/lab/';
 
 interface IUserProps {
     authAdmin: string;
@@ -15,18 +16,29 @@ interface TableState{
     
 }
 
+const useStyles = makeStyles({
+    tableContainer: {
+        margin: "auto", 
+        display: "block", 
+        width: "80%"
+    }
+})
+
+
 function UserComponent(props: IUserProps){
 
+    const classes = useStyles();
     const[users, setData] = useState([new Employee(0,'','','','','','')]);
-    const[state, setState] = useState<TableState>({
+    const [errorMessage, setErrorMessage] = useState('');
+    const[state] = useState<TableState>({
         columns: [
-            {title: 'User ID', field: 'userId'},
-            {title: 'Username', field: 'username'},
+            {title: 'User ID', field: 'userId', editable: 'never'},
+            {title: 'Username', field: 'username', editable: 'onAdd'},
             {title: 'First Name', field: 'firstName'},
-            {title: 'Password', field: 'password'},
             {title: 'Last Name', field: 'lastName'},
+            {title: 'Password', field: 'password'},
             {title: 'Email', field: 'email'},
-            {title: 'Role', field: 'role'}
+            {title: 'Role', field: 'role', editable: 'onAdd' }
         ],
         data: [],
     });
@@ -45,27 +57,60 @@ function UserComponent(props: IUserProps){
         setData(result);
     }
 
+    let updateRow = async(updatedUser: Employee) => {
+        try{
+            if(!updatedUser.password){
+                console.log("here");
+                updatedUser.password = '';
+            }
+            let res = await updateEmployee(updatedUser.username,updatedUser.password, updatedUser.firstName,updatedUser.lastName, updatedUser.email);
+            console.log(res);
+            getData();
+
+        }
+        catch(e){
+            setErrorMessage(e.response.data.reason);
+        }
+    }
+
     let deleterow = async(id: number) => {
         
         try{
-            console.log(id)
+            console.log(id);
             let res = await deleteEmployee(id);
             console.log(res);
+            getData();
     }
         catch(e){
-            console.log(e.response.data.reason);
+            setErrorMessage(e.response.data.reason);
+        }
+    }
+
+    let persistData = async(newUser: Employee) => {
+        try{
+            let persistedUser = await addNewEmployee(newUser.username, newUser.password, newUser.firstName, newUser.lastName, newUser.email, newUser.role);
+            console.log(persistedUser);
+            getData();
+        }
+        catch(e){
+            setErrorMessage(e.response.data.reason);
         }
     }
 
     let tableRef = createRef();
 
+    useEffect(()=> {
+        getData();
+    }, []);
 
     return(
         !checkAdmin(props.authAdmin) ?
         <Redirect to="/home" /> :
         <>
             {/* <Button onClick={getData} variant="contained" color="primary" size="medium">Get Users</Button>   */}
+            <div className={classes.tableContainer}>
             <MaterialTable
+            style={{marginTop:40}}
       title="Users"
       tableRef={tableRef}
       columns={state.columns}
@@ -73,40 +118,27 @@ function UserComponent(props: IUserProps){
       editable={{
         onRowAdd: (newData) =>
           new Promise((resolve) => {
-            
+              persistData(newData);  
               resolve();
-              setState((prevState) => {
-                const data = [...prevState.data];
-                data.push(newData);
-                return { ...prevState, data };
-              });
 
           }),
         onRowUpdate: (newData, oldData) =>
           new Promise((resolve) => {
-            
               resolve();
-              if (oldData) {
-                setState((prevState) => {
-                  const data = [...prevState.data];
-                  data[data.indexOf(oldData)] = newData;
-                  return { ...prevState, data };
-                });
-              }
+              updateRow(newData);
+              console.log(newData);  
+              
+              
             
           }),
         onRowDelete: async (oldData) => {
-            await deleterow(oldData.userId);
+            
           new Promise((resolve) => {
               
+              deleterow(oldData.userId);
               resolve();
-              setState((prevState) => {
-                const data = [...prevState.data];
-                data.splice(data.indexOf(oldData), 1);
-                return { ...prevState, data };
-              });
-            
-          })},
+          })
+        },
       }}
       actions={[
           {
@@ -117,6 +149,10 @@ function UserComponent(props: IUserProps){
           }
       ]}
     />
+    </div>
+    <br/>
+    <br/>
+    {errorMessage ? <Alert severity="error">{errorMessage} </Alert> : <></> }
         </>
     );
 }

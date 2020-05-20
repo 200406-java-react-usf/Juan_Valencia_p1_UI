@@ -4,7 +4,7 @@ import './App.css';
 import LoginComponent from './components/LoginComponent';
 import HomeComponent from './components/HomeComponent';
 import NavbarComponent from './components/NavbarComponent';
-import { AppBar, Toolbar, Typography, Container } from '@material-ui/core';
+import { AppBar, Toolbar, Typography } from '@material-ui/core';
 import RegisterComponent from './components/RegisterComponent';
 import { Employee } from './models/employee';
 import LogoutComponent from './components/LogoutComponent';

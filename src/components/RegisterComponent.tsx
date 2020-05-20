@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
-import { TextField, Typography, FormControl, InputLabel, Input, makeStyles, Button, Select, MenuItem } from '@material-ui/core';
+import {  Typography, FormControl, InputLabel, Input, makeStyles, Button, Select, MenuItem } from '@material-ui/core';
 import { addNewEmployee } from '../remote/auth-service';
 import { Employee } from '../models/employee';
 import Alert from '@material-ui/lab/Alert';

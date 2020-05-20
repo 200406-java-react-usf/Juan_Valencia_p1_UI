@@ -7,9 +7,7 @@ import { Typography,
     TableHead, 
     TableRow, 
     TableCell, 
-    makeStyles, 
-    TableContainer, 
-    Paper } from '@material-ui/core';
+    makeStyles } from '@material-ui/core';
 
 interface IHomeProps {
     username: string;
@@ -61,6 +59,7 @@ const HomeComponent = (props: IHomeProps) => {
                     Welcome, {props.username}!
                 </h1>
                     <div style={{margin: "auto", display: "block", width: "50%"}}>
+                        <Typography component="h6">Recently Added Employee</Typography>
                             <Table>
                             <TableHead>
                                 <TableRow >

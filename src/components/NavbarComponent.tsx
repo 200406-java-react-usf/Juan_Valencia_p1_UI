@@ -14,6 +14,13 @@ const useStyles = makeStyles({
     link: {
         textDecoration: "none",
         color: "black"
+    },
+    root: {
+        textDecoration: "none",
+        color: "black",
+        margin: "auto", 
+        display: "block",
+        alignItems: "right"
     }
 });
 
@@ -22,7 +29,6 @@ const useStyles = makeStyles({
 const NavbarComponent = (props: INavbarProps) => {
 
     const classes = useStyles();
-    let emptyEmployee: Employee;
 
 
     let checkAdmin = (authrole: string) => {
@@ -80,7 +86,7 @@ const NavbarComponent = (props: INavbarProps) => {
         <>
             <List component="nav">
                 <ListItem component="div">
-                    <Typography color="inherit" variant="h5">Revaboards</Typography>
+                    <Typography color="inherit" variant="h5">Reimbursements</Typography>
                     <ListItemText inset>
                         <Typography color="inherit" variant="h6">
                             <Link to="/home" className={classes.link}>Home</Link>
@@ -88,9 +94,11 @@ const NavbarComponent = (props: INavbarProps) => {
                     </ListItemText>
                     {checkAdmin(props.authRole)}
                     {checklogin(props.authUser?.username)}
+                    <br/>
+                    <br/>
                     <ListItemText inset>
-                        <Typography color="inherit" variant="h6">
-                            <span className={classes.link}>{props.authUser?.username}</span>
+                        <Typography color="inherit" variant="h6" >
+                            <span >{props.authUser?.username}</span>
                         </Typography>
                     </ListItemText>
                 </ListItem>
