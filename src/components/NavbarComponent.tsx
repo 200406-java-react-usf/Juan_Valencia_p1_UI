@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles, List, ListItem, Typography, ListItemText } from '@material-ui/core';
 import { Employee } from '../models/employee';
-import {checkout} from '../remote/auth-service'
+import {checkout} from '../remote/admin-service'
 
 interface INavbarProps {
     authUser: Employee;
@@ -58,6 +58,23 @@ const NavbarComponent = (props: INavbarProps) => {
         }
     }
 
+    let checkUser = (authrole: string) => {
+        if(authrole === 'user'){
+            return (
+                <>
+                <ListItemText inset>
+                <Typography color="inherit" variant="h6">
+                    <Link to="/UserReimbs" className={classes.link}>My Reimbursements</Link>
+                </Typography>
+        </ListItemText>
+        </>
+            );
+        }
+        else {
+            return;
+        }
+    }
+
     let logout = async () => {
         console.log('loggin out');
         props.setLogout(null);
@@ -98,12 +115,13 @@ const NavbarComponent = (props: INavbarProps) => {
                             <Link to="/home" className={classes.link}>Home</Link>
                         </Typography>
                     </ListItemText>
+                    {checkUser(props.authRole)}
                     {checkFm(props.authRole)}
                     {checkAdmin(props.authRole)}
                     {checklogin(props.authUser?.username)}
                     <ListItemText inset>
                         <Typography color="inherit" variant="h6" >
-                            <span className={classes.link}>{props.authUser?.username}</span>
+                            <span className={classes.link} >{props.authUser?.username}</span>
                         </Typography>
                     </ListItemText>
                 </ListItem>

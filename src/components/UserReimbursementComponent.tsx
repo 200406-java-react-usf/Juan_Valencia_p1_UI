@@ -1,15 +1,16 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, createRef, JSXElementConstructor } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
-import {  makeStyles } from '@material-ui/core';
+import {  makeStyles, Select, MenuItem } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import MaterialTable, { Column } from 'material-table';
 import { Reimbursement } from '../models/reimbursement';
-import { getReimbursements, resolveReimb } from '../remote/reimb-service';
+import { getReimbByAuthor, updateReimb, addReimb } from '../remote/reimb-service';
 
 
-interface IReimbProps {
+interface IUserReimbProps {
     role: string;
     authUsername: string;
+    authId: number;
 }
 
 interface TableState {
@@ -38,41 +39,36 @@ const useStyles = makeStyles({
  * Reimbursement for finance managers to only update the status of the Reimbursements
  * @param props two properties are passed role to check if this role is allowed and username to use for updating Reimb 
  */
-function ReimbComponent(props: IReimbProps) {
+function UserReimbComponent(props: IUserReimbProps) {
 
     const classes = useStyles();
-    const history = useHistory();
     
     const [errorMessage, setErrorMessage] = useState('');
     const [reimbursements, SetReimbursements] = useState([new Reimbursement(0,0,'','','','','','','')]);
-    const [status, setStatus] = useState('');
-    
-    const [state, setState] = useState<TableState>({
+
+    const [state] = useState<TableState>({
         columns: [
           { title: 'Id', field: 'reimbId', editable: 'never'},
-          { title: 'Amount', field: 'amount', editable: 'never', type: 'currency', cellStyle: {textAlign: 'left'} },
+          { title: 'Amount', field: 'amount', type: 'currency', cellStyle: {textAlign: 'left'} },
           { title: 'Submitted (Time)', field: 'submitted' , editable: 'never', type: 'datetime'},
           { title: 'Resolved (Time)', field: 'resolved', editable: 'never', type: 'datetime'},
-          { title: 'Description', field: 'description' , editable: 'never'},
+          { title: 'Description', field: 'description' },
           { title: 'Author', field: 'author' , editable: 'never'},
           { title: 'Resolver', field: 'resolver', editable: 'never' },
-          { title: 'Reimb. Status', field: 'status', editComponent:((props) => 
-          (<select value={props.value || ''} onChange={e => props.onChange(e.target.value)} >
-            <option value={'Denied'}>Denied</option>
-            <option value={'Pending'}>Pending</option>
-            <option value={'Approved'}>Approved</option>
-            </select>)) },
-          { title: 'Reimb Type', field: 'reimbType' , editable: 'never'}
+          { title: 'Reimb. Status', field: 'status', editable: 'never' },
+          { title: 'Reimb Type', field: 'reimbType', editComponent:((props)=> 
+          (<Select defaultValue={'OTHER'} value={props?.value || ''} onChange={e => props.onChange(e.target.value)}>
+                <MenuItem value={'LODGING'}>LODGING</MenuItem>
+                <MenuItem value={'TRAVEL'}>TRAVEL</MenuItem>
+                <MenuItem value={'FOOD'}>FOOD</MenuItem>
+                <MenuItem value={'OTHER'}>OTHER</MenuItem>
+            </Select>)) }
         ],
         data: [],
       });
 
-      const handleChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-        setStatus(e.target.value);
-      };
-
-    let checkFm = (authRole: string) => {
-        if(authRole === 'finance manager'){
+    let checkUser = (authRole: string) => {
+        if(authRole === 'user'){
             return true;
         }
         else {
@@ -83,13 +79,14 @@ function ReimbComponent(props: IReimbProps) {
     /**
      * Call a request to GET All Reimbursements and set the array of Reimbursements to Reimbursement. 
      */
-    let getData = async() => {
+    let getData = async(id: number) => {
         try{
-            let result = await getReimbursements();
+            let result: Reimbursement[] = await getReimbByAuthor(id);
+            console.log(result);
             SetReimbursements(result);
         }
         catch(e){
-            setErrorMessage(e.response.data.reason && 'Table is empty');
+            setErrorMessage(e.response.data.reason && 'No entries');
         }
         
     }
@@ -97,39 +94,49 @@ function ReimbComponent(props: IReimbProps) {
     /**
      * Call a request to Update a specific Reimbursement and re-render the table.
      * @param updatedData a Reimbursement Object use to grab status and id
-     * @param oldstatus old status of the record validate already proccessed reimbursements
+     * @param status old status of the record validate already proccessed reimbursements
      */
-    let updateData = async(updatedData: Reimbursement, oldstatus: string | undefined) => {
+    let updateData = async(updatedData: Reimbursement, status: string | undefined) => {
         try {
-            
-            if(oldstatus === 'Denied' || oldstatus === 'Approved'){
+            if(status === 'Denied' || status === 'Approved'){
                 setErrorMessage('This Reimbursement was already resolved');
             }
             else{
-                let result = await resolveReimb(updatedData.status, props.authUsername, updatedData.reimbId);
-            console.log(result);
+                let result = await updateReimb(updatedData.amount, updatedData.description, updatedData.reimbType, updatedData.reimbId);
+                console.log(result);
             }
-            
-
-
-            getData();
+            getData(props.authId);
         }
         catch (e) {
             setErrorMessage(e.response.data.reason);
         }
     }
 
+    let addData = async(newData: Reimbursement) => {
+        try{
+            let result = await addReimb(newData.amount,newData.description, props.authUsername ,newData.reimbType);
+            console.log(result);
+            getData(props.authId);
+        }
+        catch(e){
+            setErrorMessage(e.response.data.reason);
+        }
+    }
+
     useEffect(()=> {
-        getData();
+        getData(props.authId);
     },[])
+
+    let tableRef = createRef();
 
     return(
         
-        !checkFm(props.role) ?
+        !checkUser(props.role) ?
             <Redirect to="/home" /> :
             <>
                 <div className={classes.reimbContainer}>
-                    <MaterialTable
+                    
+                <MaterialTable
                         title="Reimbursements"
                         columns={state.columns}
                         data={reimbursements}
@@ -139,10 +146,16 @@ function ReimbComponent(props: IReimbProps) {
                                     updateData(newData, oldData?.status);
                                     resolve();
 
-                                })
+                                }),
+                            onRowAdd: (newData) =>
+                            new Promise((resolve) => {
+                                addData(newData);
+                                resolve();
+
+                            })
                         }}
                     />
-                    
+
                 </div>
                 <div className={classes.alert}>
                     {errorMessage ? <Alert severity="error">{errorMessage} </Alert> : <></>}
@@ -152,4 +165,6 @@ function ReimbComponent(props: IReimbProps) {
     );
 }
 
-export default ReimbComponent;
+
+
+export default UserReimbComponent;

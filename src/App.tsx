@@ -9,13 +9,12 @@ import ReimbComponent from './components/ReimbursementComponent';
 import { Employee } from './models/employee';
 import LogoutComponent from './components/LogoutComponent';
 import UserComponent from './components/UserComponent';
+import UserReimbComponent from './components/UserReimbursementComponent';
 
 function App() {
   // @ts-ignore
   const [authUser, setAuthUser] = useState(null as Employee);
-  // @ts-ignore
-  const [registeredEmployee, setEmployee] = useState(null as Employee);
-  // @ts-ignore
+
 
   return (
     <>
@@ -31,9 +30,10 @@ function App() {
       
       <Switch>
         <Redirect  from="/" to="/login" exact />
-        <Route path="/home" render={() => <HomeComponent username={authUser?.username} role={authUser?.role} newEmployee={registeredEmployee} /> } />
+        <Route path="/home" render={() => <HomeComponent username={authUser?.username} role={authUser?.role} /> } />
         <Route path="/login" render={() => <LoginComponent authUser={authUser} setAuthUser={setAuthUser} /> } />
-        <Route path="/reimbursements" render={() => <ReimbComponent role={authUser?.role} /> } />
+        <Route path="/reimbursements" render={() => <ReimbComponent authUsername={authUser?.username} role={authUser?.role} /> } />
+        <Route path="/UserReimbs" render={() => <UserReimbComponent authId={authUser?.userId} authUsername={authUser?.username} role={authUser?.role} /> } />
         <Route path="/user" render={() => <UserComponent authAdmin={authUser?.role} /> } />
         <Route path="/logout" render={() => <LogoutComponent />} />
       </Switch>

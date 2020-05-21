@@ -2,7 +2,7 @@ import React, { useState, createRef,  useEffect } from 'react';
 import { Employee } from '../models/employee';
 import { Redirect } from 'react-router-dom';
 import  MaterialTable, { Column } from 'material-table';
-import { getEmployees, deleteEmployee, updateEmployee, addNewEmployee } from '../remote/auth-service';
+import { getEmployees, deleteEmployee, updateEmployee, addNewEmployee } from '../remote/admin-service';
 import { makeStyles } from '@material-ui/core';
 import {Alert} from '@material-ui/lab/';
 

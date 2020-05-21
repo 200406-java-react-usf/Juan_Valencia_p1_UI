@@ -56,7 +56,7 @@ function LoginComponent(props: ILoginProps){
         <>
                 <div className={classes.loginContainer}>
                     <form className={classes.loginForm}>
-                        <Typography align="center" variant="h4">Login to Revaboards!</Typography>
+                        <Typography align="center" variant="h4" style={{width: "90%"}}>Login to Expense Reimbursement System!</Typography>
 
                         <FormControl margin="normal" fullWidth>
                             <InputLabel htmlFor="username">Username</InputLabel>
