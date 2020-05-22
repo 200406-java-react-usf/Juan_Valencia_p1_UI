@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import {BrowserRouter as Router, Switch, Route, Redirect, BrowserRouter } from 'react-router-dom';
 import './App.css';
 import LoginComponent from './components/LoginComponent';
 import HomeComponent from './components/HomeComponent';
@@ -38,7 +38,6 @@ function App() {
         <Route path="/logout" render={() => <LogoutComponent />} />
       </Switch>
     </Router>
-
     
     
     </>

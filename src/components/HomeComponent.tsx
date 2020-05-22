@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { Typography, 
     makeStyles } from '@material-ui/core';
 
-interface IHomeProps {
+export interface IHomeProps {
     username: string;
     role: string;
 }
@@ -30,7 +30,7 @@ const HomeComponent = (props: IHomeProps) => {
         if(role === 'admin'){
             return (
                 <>
-                <Typography component="body"><p>
+                <Typography component="div"><p>
                     Welcome to the Expense Reimbursement System(ERS), in here you are in charge of 
                     handling Employee accounts, in the navbar you will see <em>User</em> tab in which you can see all of the Employees
                     we currently have on our database. In this page you are able to Add, Edit, or Delete Employees from our database.
@@ -44,7 +44,7 @@ const HomeComponent = (props: IHomeProps) => {
         if(role === 'finance manager'){
             return (
                 <>
-                <Typography component="body"><p>
+                <Typography component="div"><p>
                     Welcome to the Expense Reimbursement System(ERS), in here you are in charge of 
                     handling Employee Reimbursements, in the navbar you will see <em>Reimbursement</em> tab in which you can see all of the employees
                     reimbursements we currently have on our database. In this page you are able to Resolve the Status of the Pending reimbursements ( keep 
@@ -59,7 +59,7 @@ const HomeComponent = (props: IHomeProps) => {
         if(role === 'user'){
             return (
                 <>
-                <Typography component="body"><p>
+                <Typography component="div"><p>
                     Welcome to the Expense Reimbursement System(ERS), in here you are able to take care your Reimbursements, in the navbar you will see 
                     <em>My Reimbursement</em> tab in which you can see all of your reimbursements. In this page you are able to add or update 
                     reimbursements if they are still pending (keep in mind that the creation time and your author username will be automatically added for you).

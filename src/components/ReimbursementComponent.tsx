@@ -7,12 +7,12 @@ import { Reimbursement } from '../models/reimbursement';
 import { getReimbursements, resolveReimb } from '../remote/reimb-service';
 
 
-interface IReimbProps {
+export interface IReimbProps {
     role: string;
     authUsername: string;
 }
 
-interface TableState {
+export interface TableState {
     columns: Array<Column<Reimbursement>>;
     data: Reimbursement[];
   }
@@ -45,9 +45,8 @@ function ReimbComponent(props: IReimbProps) {
     
     const [errorMessage, setErrorMessage] = useState('');
     const [reimbursements, SetReimbursements] = useState([new Reimbursement(0,0,'','','','','','','')]);
-    const [status, setStatus] = useState('');
     
-    const [state, setState] = useState<TableState>({
+    const [state] = useState<TableState>({
         columns: [
           { title: 'Id', field: 'reimbId', editable: 'never'},
           { title: 'Amount', field: 'amount', editable: 'never', type: 'currency', cellStyle: {textAlign: 'left'} },
@@ -67,9 +66,6 @@ function ReimbComponent(props: IReimbProps) {
         data: [],
       });
 
-      const handleChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-        setStatus(e.target.value);
-      };
 
     let checkFm = (authRole: string) => {
         if(authRole === 'finance manager'){

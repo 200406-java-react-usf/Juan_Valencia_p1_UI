@@ -7,7 +7,7 @@ import { Reimbursement } from '../models/reimbursement';
 import { getReimbByAuthor, updateReimb, addReimb } from '../remote/reimb-service';
 
 
-interface IUserReimbProps {
+export interface IUserReimbProps {
     role: string;
     authUsername: string;
     authId: number;

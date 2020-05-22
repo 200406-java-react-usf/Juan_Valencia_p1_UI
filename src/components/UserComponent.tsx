@@ -3,10 +3,10 @@ import { Employee } from '../models/employee';
 import { Redirect } from 'react-router-dom';
 import  MaterialTable, { Column } from 'material-table';
 import { getEmployees, deleteEmployee, updateEmployee, addNewEmployee } from '../remote/admin-service';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Select, MenuItem } from '@material-ui/core';
 import {Alert} from '@material-ui/lab/';
 
-interface IUserProps {
+export interface IUserProps {
     authAdmin: string;
 }
 
@@ -21,6 +21,12 @@ const useStyles = makeStyles({
         margin: "auto", 
         display: "block", 
         width: "80%"
+    },
+    alert: {
+        display: "flex",
+        justifyContent: "center",
+        margin: 5,
+        padding: 20
     }
 })
 
@@ -38,7 +44,12 @@ function UserComponent(props: IUserProps){
             {title: 'Last Name', field: 'lastName'},
             {title: 'Password', field: 'password'},
             {title: 'Email', field: 'email'},
-            {title: 'Role', field: 'role', editable: 'onAdd' }
+            {title: 'Role', field: 'role', editable: 'onAdd', editComponent:((props)=> 
+            (<Select defaultValue={'user'} value={props?.value || ''} onChange={e => props.onChange(e.target.value)}>
+                  <MenuItem value={'admin'}>admin</MenuItem>
+                  <MenuItem value={'finance manager'}>finance manager</MenuItem>
+                  <MenuItem value={'user'}>user</MenuItem>
+              </Select>)) }
         ],
         data: [],
     });
@@ -152,7 +163,9 @@ function UserComponent(props: IUserProps){
     </div>
     <br/>
     <br/>
-    {errorMessage ? <Alert severity="error" style={{display: "block", width: "50%"}}>{errorMessage} </Alert> : <></> }
+    <div className={classes.alert}>
+                    {errorMessage ? <Alert severity="error">{errorMessage} </Alert> : <></>}
+                </div>
         </>
     );
 }

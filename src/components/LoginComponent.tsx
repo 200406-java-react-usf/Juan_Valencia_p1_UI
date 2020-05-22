@@ -5,7 +5,7 @@ import {authenticate} from '../remote/auth-service';
 import { Redirect } from 'react-router-dom';
 import { Employee } from '../models/employee';
 
-interface ILoginProps {
+export interface ILoginProps {
     authUser: Employee;
     setAuthUser: (user: Employee) => void
 }
@@ -32,11 +32,11 @@ function LoginComponent(props: ILoginProps){
     const [errorMessage, setErrorMessage] = useState('');
 
     let updateUsername = (e: any) => {
-        setUsername(e.currentTarget.value);
+        setUsername(e.target.value);
     }
 
     let updatePassword = (e: any) => {
-        setPassword(e.currentTarget.value);
+        setPassword(e.target.value);
     }
 
     let login = async () => {

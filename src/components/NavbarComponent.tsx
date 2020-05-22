@@ -1,10 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, BrowserRouter, Redirect } from 'react-router-dom';
 import { makeStyles, List, ListItem, Typography, ListItemText } from '@material-ui/core';
 import { Employee } from '../models/employee';
 import {checkout} from '../remote/admin-service'
 
-interface INavbarProps {
+export interface INavbarProps {
     authUser: Employee;
     authRole: string;
     setLogout: (user: any) => void
@@ -23,17 +23,16 @@ const NavbarComponent = (props: INavbarProps) => {
 
     const classes = useStyles();
 
-
     let checkAdmin = (authrole: string) => {
         if(authrole === 'admin'){
             return (
-                <>
+                
                 <ListItemText inset>
                 <Typography color="inherit" variant="h6">
                     <Link to="/user" className={classes.link}>Users</Link>
                 </Typography>
-        </ListItemText>
-        </>
+            </ListItemText>
+        
             );
         }
         else {
